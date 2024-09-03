@@ -33,6 +33,32 @@ return Results.Ok();
 });
 
 
+// actualizar un producto existente
+app.MapPut("/products/{id}", (int id, Product product) =>
+{
+    var existingProduct = products.FirstOrDefault(p => p.Id == id);
+    if (existingProduct != null)
+    {
+        existingProduct.Name = product.Name;
+        existingProduct.Price = product.Price;
+        return Results.Ok();
+    }
+    return Results.NotFound();
+});
+
+// eliminar un producto
+app.MapDelete("/products/{id}", (int id) =>
+{
+    var product = products.FirstOrDefault(p => p.Id == id);
+    if (product != null)
+    {
+        products.Remove(product);
+        return Results.Ok();
+    }
+    return Results.NotFound();
+});
+
+
 
 app.Run();
 
