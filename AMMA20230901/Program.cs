@@ -16,28 +16,29 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
+// lista de productos en memoria
+var products = new List<Product>();
 
-app.MapGet("/weatherforecast", () =>
+// obtener todos los productos
+app.MapGet("/products", () => products);
+
+// obtener un producto por Id
+app.MapGet("/products/{id}", (int id) => products.FirstOrDefault(p => p.Id == id));
+
+// crear un nuevo producto
+app.MapPost("/products", (Product product) =>
 {
-    var forecast = Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateTime.Now.AddDays(index),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast");
+products.Add(product);
+return Results.Ok();
+});
+
+
 
 app.Run();
 
-internal record WeatherForecast(DateTime Date, int TemperatureC, string? Summary)
+public class Product
 {
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
+    public int Id { get; set; }
+    public string Name { get; set; }
+    public decimal Price { get; set; }
 }
